@@ -18,6 +18,6 @@ function onFormSubmit(e) {
   e.preventDefault();
   //   const formData = new FormData(e.currentTarget);
   //   const searchQuery = formData.get('searchQuery');
-  const searchQuery = e.currentTarget.elements.searchQuery.value;
+  const searchQuery = e.currentTarget.elements.searchQuery.value.trim();;
   Notiflix.Notify.success(searchQuery);
 }
