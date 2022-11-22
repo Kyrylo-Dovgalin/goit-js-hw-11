@@ -1,0 +1,28 @@
+.search-form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  padding: 0 auto;
+  margin: 0;
+  width: 100%;
+
+  text-align: center;
+
+  background-color: grey;
+}
+
+body {
+  padding-top: 50px;
+}
+
+.load-more {
+  display: block;
+  margin: 0 auto;
+  background-color: lightgrey;
+}
+
+.load-more.is-hidden {
+  display: none;
+}
