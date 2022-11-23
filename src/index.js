@@ -1,6 +1,8 @@
-import axios from 'axios';
-
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+// Описан в документации
+import SimpleLightbox from 'simplelightbox';
+// Дополнительный импорт стилей
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import './css/styles.css';
 
@@ -12,20 +14,28 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
-const imagesApiService = new ImagesApiService();
-let imagesShown = 0;
-
 refs.form.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
+
+const imagesApiService = new ImagesApiService();
+
+let gallery = new SimpleLightbox('.photo-card a', {
+  captionsData: 'alt',
+  captionPosition: 'bottom',
+  captionDelay: 250,
+});
+
+let imagesShown = 0;
 
 function onFormSubmit(e) {
   e.preventDefault();
   clearMarkUp();
+  refs.loadMoreBtn.classList.add('is-hidden');
+
   imagesShown = 0;
 
   imagesApiService.resetPage();
 
-  refs.loadMoreBtn.classList.add('is-hidden');
   //   const formData = new FormData(e.currentTarget);
   //   const searchQuery = formData.get('searchQuery');
   imagesApiService.query = e.currentTarget.elements.searchQuery.value.trim();
@@ -38,43 +48,45 @@ function onFormSubmit(e) {
   fetchImages();
 }
 
-function fetchImages() {
-  imagesApiService
-    .fetchImages()
-    .then(({ hits, totalHits, total } = {}) => {
-      if (!hits.length) {
-        Notify.info(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        return;
-      }
-      createImagesMarkUp(hits);
-      if (!imagesShown) {
-        Notify.success(
-          `We found ${totalHits} , buy licence to get more, total found ${total}`
-        );
-      }
+async function fetchImages() {
+  try {
+    const { hits, totalHits, total } = await imagesApiService.fetchImages();
 
-      imagesShown += hits.length;
-      if (imagesShown < totalHits) {
-        Notify.info(`Totally shown: ${imagesShown} images`);
+    if (!hits.length) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      return;
+    }
+    createImagesMarkUp(hits);
 
-        refs.loadMoreBtn.classList.remove('is-hidden');
-      } else {
-        refs.loadMoreBtn.classList.add('is-hidden');
-        Notify.info(
-          `We are sorry, but you have reached the end of search results. Totally shown: ${imagesShown} images`
-        );
-      }
-    })
-    .catch(error => Notify.failure(`${error}`));
+    if (!imagesShown) {
+      Notify.success(
+        `We found ${totalHits} , buy licence to get more, total found ${total}`
+      );
+    }
+    imagesShown += hits.length;
+    gallery.refresh();
+
+    if (imagesShown < totalHits) {
+      Notify.info(`Totally shown: ${imagesShown} images`);
+      refs.loadMoreBtn.classList.remove('is-hidden');
+    } else {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      Notify.info(
+        `We are sorry, but you have reached the end of search results. Totally shown: ${imagesShown} images`
+      );
+    }
+  } catch (error) {
+    Notify.failure(`${error}`);
+  }
 }
 
 function createImagesMarkUp(imagesData) {
   const markup = imagesData
     .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
-      return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+      return `<div class="photo-card"><a href="${webformatURL}">
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes ${likes}</b>
