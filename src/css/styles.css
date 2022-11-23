@@ -4,7 +4,7 @@
   left: 0;
   z-index: 1000;
 
-  padding: 0 auto;
+  padding: 15px 15px;
   margin: 0;
   width: 100%;
 
@@ -14,7 +14,7 @@
 }
 
 body {
-  padding-top: 50px;
+  padding-top: 80px;
 }
 
 .load-more {
@@ -25,6 +25,16 @@ body {
 
 .load-more.is-hidden {
   display: none;
+}
+
+input[name='searchQuery'] {
+  width: 200px;
+  padding: 10px 5px;
+}
+
+button[type='submit'] {
+  padding: 10px 15px;
+  border-radius: 33%;
 }
 
 .gallery {
@@ -40,6 +50,7 @@ body {
 .photo-card {
   border: black solid 2px;
 }
+
 .info {
   display: flex;
   gap: 10px;
