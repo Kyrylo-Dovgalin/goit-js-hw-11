@@ -25,10 +25,6 @@ class ImagesApiService {
       this.incrementPage();
       return response.json();
     });
-    // .then(({ images }) => {
-    //   this.incrementPage();
-    //   return images;
-    // });
   }
 
   incrementPage() {
@@ -49,12 +45,3 @@ class ImagesApiService {
 }
 
 export { ImagesApiService };
-
-// function fetchImages(searchParams) {
-//   return fetch(`${BASE_URL}${searchParams}`).then(response => {
-//     if (!response.ok) {
-//       throw new Error(response.status);
-//     }
-//     return response.json();
-//   });
-// }

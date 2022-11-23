@@ -13,15 +13,18 @@ const refs = {
 };
 
 const imagesApiService = new ImagesApiService();
+let imagesShown = 0;
 
 refs.form.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onFormSubmit(e) {
   e.preventDefault();
+  clearMarkUp();
+  imagesShown = 0;
+
   imagesApiService.resetPage();
 
-  clearMarkUp();
   refs.loadMoreBtn.classList.add('is-hidden');
   //   const formData = new FormData(e.currentTarget);
   //   const searchQuery = formData.get('searchQuery');
@@ -38,42 +41,52 @@ function onFormSubmit(e) {
 function fetchImages() {
   imagesApiService
     .fetchImages()
-    .then(images => {
-      console.log(images.hits.length);
-      if (!images.hits.length) {
+    .then(({ hits, totalHits, total } = {}) => {
+      if (!hits.length) {
         Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
       }
+      createImagesMarkUp(hits);
+      if (!imagesShown) {
+        Notify.success(
+          `We found ${totalHits} , buy licence to get more, total found ${total}`
+        );
+      }
 
-      createImagesMarkUp(images.hits);
-      refs.loadMoreBtn.classList.remove('is-hidden');
+      imagesShown += hits.length;
+      if (imagesShown < totalHits) {
+        Notify.info(`Totally shown: ${imagesShown} images`);
 
-      Notify.success(
-        `We found ${images.totalHits} , buy licence to get more, total found ${images.total}`
-      );
+        refs.loadMoreBtn.classList.remove('is-hidden');
+      } else {
+        refs.loadMoreBtn.classList.add('is-hidden');
+        Notify.info(
+          `We are sorry, but you have reached the end of search results. Totally shown: ${imagesShown} images`
+        );
+      }
     })
     .catch(error => Notify.failure(`${error}`));
 }
 
 function createImagesMarkUp(imagesData) {
   const markup = imagesData
-    .map(image => {
+    .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
       return `<div class="photo-card">
-  <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
-      <b>Likes ${image.likes}</b>
+      <b>Likes ${likes}</b>
     </p>
     <p class="info-item">
-      <b>Views ${image.views}</b>
+      <b>Views ${views}</b>
     </p>
     <p class="info-item">
-      <b>Comments ${image.comments}</b>
+      <b>Comments ${comments}</b>
     </p>
     <p class="info-item">
-      <b>Downloads ${image.downloads}</b>
+      <b>Downloads ${downloads}</b>
     </p>
   </div>
 </div>`;
@@ -87,23 +100,6 @@ function clearMarkUp() {
   refs.gallery.innerHTML = ``;
 }
 
-function onLoadMore(e) {
-  imagesApiService
-    .fetchImages()
-    .then(images => {
-      console.log(images.hits.length);
-      if (!images.hits.length) {
-        Notify.info(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        return;
-      }
-      createImagesMarkUp(images.hits);
-      refs.loadMoreBtn.classList.remove('is-hidden');
-
-      Notify.success(
-        `We found ${images.totalHits} , buy licence to get more, total found ${images.total}`
-      );
-    })
-    .catch(error => Notify.failure(`${error}`));
+function onLoadMore() {
+  fetchImages();
 }
