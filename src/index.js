@@ -3,7 +3,8 @@ import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 import './css/styles.css';
-import { fetchImages } from './api/imgs-api-service';
+
+import { ImagesApiService } from './api/imgs-api-service';
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -11,39 +12,44 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
+const imagesApiService = new ImagesApiService();
+
 refs.form.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-let searchQuery = null;
-let page = null;
-
 function onFormSubmit(e) {
-  page = 1;
   e.preventDefault();
+  imagesApiService.resetPage();
+
   clearMarkUp();
   refs.loadMoreBtn.classList.add('is-hidden');
   //   const formData = new FormData(e.currentTarget);
   //   const searchQuery = formData.get('searchQuery');
-  searchQuery = e.currentTarget.elements.searchQuery.value.trim();
-  console.log(searchQuery);
-  if (!searchQuery) {
+  imagesApiService.query = e.currentTarget.elements.searchQuery.value.trim();
+
+  if (!imagesApiService.query) {
     Notify.info('Empty request, please type not only spaces');
     return;
   }
-  fetchImages(searchQuery, page)
+
+  fetchImages();
+}
+
+function fetchImages() {
+  imagesApiService
+    .fetchImages()
     .then(images => {
+      console.log(images.hits.length);
       if (!images.hits.length) {
         Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
       }
-      // for (const image of images.hits) {
+
       createImagesMarkUp(images.hits);
       refs.loadMoreBtn.classList.remove('is-hidden');
-      // }
 
-      console.log(images);
       Notify.success(
         `We found ${images.totalHits} , buy licence to get more, total found ${images.total}`
       );
@@ -74,14 +80,6 @@ function createImagesMarkUp(imagesData) {
     })
     .join(' ');
 
-  //   webformatURL - ссылка на маленькое изображение для списка карточек.
-  // largeImageURL - ссылка на большое изображение.
-  // tags - строка с описанием изображения. Подойдет для атрибута alt.
-  // likes - количество лайков.
-  // views - количество просмотров.
-  // comments - количество комментариев.
-  // downloads - количество загрузок.
-
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
 
@@ -90,21 +88,19 @@ function clearMarkUp() {
 }
 
 function onLoadMore(e) {
-  page += 1;
-  fetchImages(searchQuery, page)
+  imagesApiService
+    .fetchImages()
     .then(images => {
+      console.log(images.hits.length);
       if (!images.hits.length) {
         Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
       }
-      // for (const image of images.hits) {
       createImagesMarkUp(images.hits);
       refs.loadMoreBtn.classList.remove('is-hidden');
-      // }
 
-      console.log(images);
       Notify.success(
         `We found ${images.totalHits} , buy licence to get more, total found ${images.total}`
       );
