@@ -34,7 +34,8 @@ input[name='searchQuery'] {
 
 button[type='submit'] {
   padding: 10px 15px;
-  border-radius: 33%;
+  width: 75px;
+  border-radius: 50%;
 }
 
 .gallery {
