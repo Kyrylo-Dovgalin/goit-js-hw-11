@@ -59,6 +59,7 @@ async function fetchImages() {
       return;
     }
     createImagesMarkUp(hits);
+    smoothScroll();
 
     if (!imagesShown) {
       Notify.success(
@@ -84,8 +85,17 @@ async function fetchImages() {
 
 function createImagesMarkUp(imagesData) {
   const markup = imagesData
-    .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
-      return `<div class="photo-card"><a href="${webformatURL}">
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => {
+        return `<div class="photo-card"><a href="${largeImageURL}">
   <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
@@ -102,10 +112,22 @@ function createImagesMarkUp(imagesData) {
     </p>
   </div>
 </div>`;
-    })
+      }
+    )
     .join(' ');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 10,
+    behavior: 'smooth',
+  });
 }
 
 function clearMarkUp() {
