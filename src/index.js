@@ -72,7 +72,7 @@ async function fetchImages() {
     gallery.refresh();
 
     if (imagesShown < totalHits) {
-      Notify.info(`Totally shown: ${imagesShown} images`);
+      // Notify.info(`Totally shown: ${imagesShown} images`);
       refs.loadMoreBtn.classList.remove('is-hidden');
     } else {
       refs.loadMoreBtn.classList.add('is-hidden');
