@@ -6,21 +6,23 @@
     <title>Page title</title>
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
-    </form>
+    <div class="container">
+      <form class="search-form" id="search-form">
+        <input
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+        <button type="submit">Search</button>
+      </form>
 
-    <div class="gallery">
-      <!-- Карточки изображений -->
+      <div class="gallery">
+        <!-- Карточки изображений -->
+      </div>
+
+      <button type="button" class="load-more is-hidden">Load more</button>
     </div>
-
-    <button type="button" class="load-more is-hidden">Load more</button>
 
     <script src="index.js" type="module"></script>
   </body>

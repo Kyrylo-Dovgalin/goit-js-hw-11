@@ -4,6 +4,8 @@ import SimpleLightbox from 'simplelightbox';
 // Дополнительный импорт стилей
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+import InfiniteScroll from 'infinite-scroll';
+
 import './css/styles.css';
 
 import { ImagesApiService } from './api/imgs-api-service';
@@ -96,7 +98,7 @@ function createImagesMarkUp(imagesData) {
         downloads,
       }) => {
         return `<div class="photo-card"><a href="${largeImageURL}">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+  <img src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes ${likes}</b>

@@ -17,6 +17,11 @@ body {
   padding-top: 80px;
 }
 
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
 .load-more {
   display: block;
   margin: 0 auto;
