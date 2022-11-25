@@ -61,7 +61,10 @@ async function fetchImages() {
       return;
     }
     createImagesMarkUp(hits);
-    smoothScroll();
+
+    if (imagesApiService.page > 2) {
+      smoothScroll();
+    }
 
     if (!imagesShown) {
       Notify.success(
@@ -73,6 +76,7 @@ async function fetchImages() {
 
     if (imagesShown < totalHits) {
       // Notify.info(`Totally shown: ${imagesShown} images`);
+
       refs.loadMoreBtn.classList.remove('is-hidden');
     } else {
       refs.loadMoreBtn.classList.add('is-hidden');
@@ -127,7 +131,7 @@ function smoothScroll() {
     .firstElementChild.getBoundingClientRect();
 
   window.scrollBy({
-    top: cardHeight * 10,
+    top: cardHeight * 2,
     behavior: 'smooth',
   });
 }
